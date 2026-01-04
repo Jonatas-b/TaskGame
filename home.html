@@ -1,19 +1,40 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TaskGame</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap" rel="stylesheet">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <div class="perfil">
-        <h1>Sem nome</h1>
-        <h2>Level 0</h2>
-        <img src="./image/Logo TaskGame - Copia.png" alt="foto do usuário">
+      <h1>Sem nome</h1>
+      <h2 id="nivel">Level 0</h2>
+      <img src="./image/Logo TaskGame - Copia.png" alt="foto do usuário" />
     </div>
-</body>
+    <div class="level">
+      <div class="text">
+        <p>0/1000</p>
+        <p style="color: #1e293b">XP</p>
+      </div>
+      <div class="progress">
+        <div class="markup"></div>
+      </div>
+    </div>
+    <p class="motivation">Conclua tarefas, ganhe XP e mantenha sua sequência.</p>
+    <!-- <div class="bar task">
+      <img src="" alt="" />
+      <p></p>
+      <p></p>
+      <h4></h4>
+    </div> -->
+    <a class="btn" href="./lista.html">+ Nova Tarefa</a>
+    <script src="./script.js"></script>
+  </body>
 </html>
