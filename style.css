@@ -160,7 +160,7 @@ input:focus {
   p {
     margin-top: 3rem;
   }
-  .taskList {
+  #taskList {
     height: 25rem;
   }
 }
@@ -187,7 +187,7 @@ input:focus {
   display: inline;
   position: relative;
   top: -1.7rem;
-  left: -2.5rem;
+  left: -2rem;
 }
 input[type="checkbox"] {
   position: relative;
