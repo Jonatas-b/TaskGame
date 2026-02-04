@@ -12,7 +12,6 @@
   box-sizing: border-box;
   scroll-behavior: smooth;
   overflow-x: hidden;
-  /* overscroll-behavior-y: none; */
 }
 body {
   background: var(--bg);
@@ -20,17 +19,18 @@ body {
   font-family: "Kdam Thmor Pro", sans-serif;
   font-weight: 500;
 }
-.logo {
-  margin: 12rem 0;
+.telaLoad {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  height: 100%;
-  opacity: 25%;
+  height: 100vh;
 }
 .load {
   overflow: visible;
-  position: absolute;
-  top: 24rem;
-  left: 10rem;
+  position: fixed;
+  top: 50%;
+  left: calc(50% - 2rem);
   width: 4rem;
   display: flex;
   flex-direction: row;
@@ -83,14 +83,13 @@ p {
   background: var(--verde);
   position: fixed;
   bottom: 2rem;
-  border: none;
   right: 2rem;
   text-decoration: none;
   color: var(--azul);
   font-size: 2rem;
 }
 button {
-  border:none;
+  border: none;
 }
 
 /* Login HTML */
@@ -132,24 +131,25 @@ input:focus {
 }
 .btn {
   overflow-y: hidden;
-  position: absolute;
+  position: fixed;
   bottom: 2rem;
-  position: absolute;
-  left: 26%;
+  left: 25%;
+  margin-top: 2rem;
   padding: 0.8rem 2rem;
-  width: 12.8rem;
+  width: 50%;
   height: 3rem;
   display: flex;
-  font-size: 1.2rem;
+  font-size: 1.12rem;
   justify-content: center;
   align-items: center;
   border-radius: 1rem;
-  text-decoration: none;
   color: var(--bg);
+  font-weight: 600;
+  text-decoration: none;
   background: var(--verde);
 }
 
-/* Quarto HTML */
+/* Lista HTML */
 #taskList {
   width: 100%;
   height: 30rem;
@@ -171,7 +171,11 @@ input:focus {
   right: 2rem;
 }
 .bar {
-  padding: 0.6rem 0 0 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.62rem 0.62rem 0 1.25rem;
   width: 98%;
   height: 4rem;
   border-radius: 42px;
@@ -179,36 +183,22 @@ input:focus {
   box-shadow: var(--sombra);
   overflow: hidden;
 }
-.bar span {
-  color: var(--verde);
-}
 .bar p {
-  font-size: 1rem;
-  display: inline;
-  position: relative;
-  top: -1.7rem;
-  left: -2rem;
+  display: inline-flex;
+  margin: -6rem 0 0 0;
+  font-size: 0.93rem;
+  color: var(--cinza);
+  grid-column: 1;
+  text-align: start;
 }
-input[type="checkbox"] {
-  position: relative;
-  top: 16%;
-  right: -8rem;
+.bar input[type="checkbox"] {
+  grid-column: 3;
+  justify-self: end;
+  align-self: center;
+  margin: 0.62rem 0.25rem 0.62rem 0;
+  width: 1.5rem;
+  height: 1.5rem;
 }
-input[type="checkbox"]:hover {
-  cursor: pointer;
-}
- /* appearance: none;
-    width: 0;
-    height: 0;
-    margin-left: 0;
-    padding: 0;
-    border: none;
-    outline: none;
-} */
-/* .bar i {
-  font-size: 0.8rem;
-  margin-left: 0.3rem; 
-} */
 
 /* Home */
 .perfil {
@@ -274,9 +264,32 @@ h2 {
   border-radius: 50%;
   background: var(--cinza);
   border: solid 2px #0d9488;
+  z-index: 10;
 }
 .motivation {
   margin: 0;
   margin-bottom: 4rem;
   font-size: 0.75rem;
+}
+#taskSelect {
+  width: 100%;
+  height: 30rem;
+  margin: 4rem 0 0 0;
+  
+}
+@media (max-height: 800px) {
+  p {
+    margin-top: 3rem;
+  }
+  #taskSelect {
+    height: 25rem;
+  }
+}
+#xp {
+  /* display: none; */
+  grid-column: 2;
+  justify-self: center;
+  align-self: center;
+  margin-bottom: 1.3rem;
+  color: var(--verde);
 }

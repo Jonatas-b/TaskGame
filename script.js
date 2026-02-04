@@ -14,6 +14,16 @@ function carregarUsuario() {
   let data = localStorage.getItem("taskgame_user");
   if (data) {
     user = JSON.parse(data);
+    // Garante propriedades padrão caso não existam
+    user.nome = user.nome || "";
+    user.email = user.email || "";
+    user.senha = user.senha || "";
+    user.nivel = user.nivel || 1;
+    user.xp = user.xp !== undefined ? user.xp : 0;
+    user.tarefasAtivas = Array.isArray(user.tarefasAtivas)
+      ? user.tarefasAtivas
+      : [];
+
     return user;
   }
   return null;
@@ -38,26 +48,48 @@ document.addEventListener("DOMContentLoaded", () => {
 function initLogin() {
   // Captura o botão e adiciona evento de clique
   document.getElementById("botaoLogin").addEventListener("click", function () {
-    
-    function getInputs() {
-      // Captura o valor do input
-      let nomeValor = document.getElementById("nome").value.trim();
-      let emailValor = document.getElementById("email").value.trim();
-      let senhaValor = document.getElementById("password").value.trim();
-      
-      // Validação simples
-      if (!nomeValor || !emailValor || !senhaValor) {
-      alert("Preencha todos os campos.");
+    // Captura os valores dos inputs
+    let nomeValor = document.getElementById("nome").value.trim();
+    let emailValor = document.getElementById("email").value.trim();
+    let senhaValor = document.getElementById("password").value.trim();
+
+    // Validações
+    if (!nomeValor) {
+      alert("Por favor, preencha o nome.");
       return;
     }
 
-    // Salva no objeto
-      user.nome = nomeValor;
-      user.email = emailValor;
-      user.senha = senhaValor;
+    if (nomeValor.length < 4) {
+      alert("O nome deve ter no mínimo 4 caracteres.");
+      return;
     }
 
-    getInputs();
+    if (!emailValor) {
+      alert("Por favor, preencha o email.");
+      return;
+    }
+
+    // Validação de email
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regexEmail.test(emailValor)) {
+      alert("Por favor, insira um email válido.");
+      return;
+    }
+
+    if (!senhaValor) {
+      alert("Por favor, preencha a senha.");
+      return;
+    }
+
+    if (senhaValor.length < 6) {
+      alert("A senha deve ter no mínimo 6 caracteres.");
+      return;
+    }
+
+    // Se passou em todas as validações, salva os dados
+    user.nome = nomeValor;
+    user.email = emailValor;
+    user.senha = senhaValor;
 
     salvarUsuario(user); // Salva no localStorage
 
@@ -329,9 +361,9 @@ function initLista() {
       item.innerHTML = `
       <div class="bar">
       <input type="checkbox" data-id="${tarefa.id}">
-      <p><span>Tarefa: </span>${tarefa.nome}</p>
+      <p><span style="color: #0d9488">Tarefa: </span>${tarefa.nome}</p>
       <br />
-      <p style="color: #1e293b" ><span>Nível: </span>${tarefa.dificuldade}</p>
+      <p style="color: #1e293b" ><span style="color: #0d9488";>Nível: </span>${tarefa.dificuldade}</p>
       </div>
       `;
 
@@ -340,48 +372,58 @@ function initLista() {
   }
   renderizarTarefas(tarefasBase);
 
-
   // Eventos após clique no botão
   document.getElementById("botaoLista").addEventListener("click", function () {
     carregarUsuario();
 
     // Filtra tarefas selecionadas
-  function getTarefasSelecionadas() {
-    const checkboxes = document.querySelectorAll(
-      '#taskList input[type="checkbox"]:checked',
-    );
+    function getTarefasSelecionadas() {
+      const checkboxes = document.querySelectorAll(
+        '#taskList input[type="checkbox"]:checked',
+      );
 
-    return Array.from(checkboxes).map((cb) => Number(cb.dataset.id));
-  }
+      return Array.from(checkboxes).map((cb) => Number(cb.dataset.id));
+    }
 
     // Salva tarefas selecionadas no objeto
     function salvarTarefasSelecionadas() {
-      const idsSelecionados = getTarefasSelecionadas();
+      let idsSelecionados = getTarefasSelecionadas();
 
-      if (idsSelecionados.length <= 4) {
-        alert("Selecione pelo menos 5 tarefas");
-        return;
+      // Validação: precisa selecionar pelo menos 5 tarefas
+      if (idsSelecionados.length < 5) {
+        alert("Selecione pelo menos 5 tarefas.");
+        return false; // indica falha
       }
 
-      user.tarefasAtivas = tarefasBase.filter((tarefa) =>
-        idsSelecionados.includes(tarefa.id),
-      );
+      user.tarefasAtivas = tarefasBase
+        .filter((tarefa) => idsSelecionados.includes(tarefa.id))
+        .map((t) => ({ ...t, concluida: false }));
+
+      return true; // indica sucesso
     }
 
-    salvarTarefasSelecionadas();
+    // Executa validação e só segue em frente se tiver sucesso
+    const validaOk = salvarTarefasSelecionadas();
+    if (!validaOk) return; // não salva nem navega
+
     salvarUsuario();
 
     console.log("Objeto atualizado:", user.tarefasAtivas);
 
     setTimeout(function () {
       window.location.href = "./apresentacao2.html";
-    }, 3000);
+    }, 1000);
   });
 }
 
 function initHome() {
   carregarUsuario(user);
-  console.log(localStorage.taskgame_user)
+
+  if (user.xp === null) {
+    user.xp = 0;
+  }
+
+  console.log(localStorage.taskgame_user);
 
   const profile = document.getElementById("profile");
   profile.innerHTML = `<div class="perfil">
@@ -391,11 +433,150 @@ function initHome() {
     </div>
     <div class="level">
       <div class="text">
-        <p id="score">${user.xp}  / 1000</p>
+        <p id="score">${user.xp} / ${calcularXPRequisito(user.nivel)}</p>
         <p style="color: #1e293b">XP</p>
       </div>
       <div class="progress" id="progressBar">
-        <div class="markup"></div>
+        <div class="markup" id="markup"></div>
       </div>
-    </div>`
+    </div>`;
+
+  const selectList = document.getElementById("taskSelect");
+
+  function renderizarTarefasSelecionadas(lista) {
+    selectList.innerHTML = "";
+
+    lista.forEach((tarefa) => {
+      const itemSelect = document.createElement("div");
+
+      itemSelect.innerHTML = `
+      <div class="bar">
+      <input type="checkbox" data-id="${tarefa.id}">
+      <p><span style="color: #0d9488">Tarefa: </span>${tarefa.nome}</p>
+      <br />
+      <p style="color: #1e293b" ><span style="color: #0d9488">Nível: </span>${tarefa.dificuldade}</p>
+      <p id="xp">+${tarefa.xp} XP</p>
+      </div>
+      `;
+
+      selectList.appendChild(itemSelect);
+    });
+  }
+  renderizarTarefasSelecionadas(user.tarefasAtivas);
+
+  // Marca checkboxes já concluídas e adiciona listener para conclusão
+  function inicializarEventosTarefas() {
+    // marca as já concluídas (caso existam)
+    user.tarefasAtivas.forEach((tarefa) => {
+      if (tarefa.concluida) {
+        const cb = selectList.querySelector(`input[data-id="${tarefa.id}"]`);
+        if (cb) {
+          cb.checked = true;
+          cb.disabled = true;
+          cb.closest(".bar")?.classList.add("completed");
+        }
+      }
+    });
+
+    // Delegation: confirmar antes de marcar concluída
+    selectList.addEventListener("change", function (e) {
+      const target = e.target;
+      if (!target.matches('input[type="checkbox"]')) return;
+
+      const id = Number(target.dataset.id);
+      const tarefa = user.tarefasAtivas.find((t) => t.id === id);
+      if (!tarefa) return;
+
+      // Só processa quando marcado (não permitir desmarcar)
+      if (target.checked) {
+        const confirmar = confirm(
+          `Confirmar conclusão da tarefa:\n${tarefa.nome}?`,
+        );
+        if (!confirmar) {
+          target.checked = false;
+          return;
+        }
+
+        // Marca como concluída e impede desmarcar
+        target.checked = true;
+        target.disabled = true;
+        const bar = target.closest(".bar");
+        if (bar) bar.classList.add("completed");
+
+        // Atualiza estado e concede XP
+        tarefa.concluida = true;
+        const adicionou = adicionarXP(tarefa.xp);
+        salvarUsuario();
+
+        // Atualiza UI imediata: score e nível
+        const scoreEl = document.getElementById("score");
+        const nivelEl = document.getElementById("nivel");
+        if (scoreEl) {
+          scoreEl.textContent = `${user.xp} / ${calcularXPRequisito(user.nivel)}`;
+        }
+        if (nivelEl) {
+          nivelEl.textContent = `Nível ${user.nivel}`;
+        }
+
+        // Atualiza barra de progresso
+        porcentagem = (user.xp / calcularXPRequisito(user.nivel)) * 100;
+        encherBarra();
+      } else {
+        // Se por algum motivo tentou desmarcar, restaura para disabled
+        target.checked = true;
+        target.disabled = true;
+      }
+    });
+  }
+
+  inicializarEventosTarefas();
+
+  // -----------------
+  // Sistema de Níveis
+  // -----------------
+  function calcularXPRequisito(nivel) {
+    // Nível 1: 180 XP, Nível 2: 240 XP, Nível 3: 300 XP, etc.
+    return 180 + (nivel - 1) * 60;
+  }
+
+  function adicionarXP(quantidade) {
+    if (typeof quantidade !== 'number' || isNaN(quantidade) || quantidade <= 0) {
+      console.warn('adicionarXP: quantidade inválida', quantidade);
+      return false;
+    }
+
+    user.xp = (user.xp || 0) + quantidade;
+
+    // Verifica se o usuário subiu de nível
+    while (user.xp >= calcularXPRequisito(user.nivel)) {
+      user.xp -= calcularXPRequisito(user.nivel);
+      user.nivel++;
+      console.log(`🎉 Parabéns! Você subiu para o nível ${user.nivel}!`);
+    }
+
+    salvarUsuario();
+    return true;
+  }
+
+  function obterXPAtual() {
+    return user.xp;
+  }
+
+  function obterXPRequisito() {
+    return calcularXPRequisito(user.nivel);
+  }
+
+  let porcentagem = (user.xp / calcularXPRequisito(user.nivel)) * 100;
+  function encherBarra() {
+    document.getElementById("progressBar").style.background =
+      `linear-gradient(90deg, #0d9488 ${porcentagem}%, #1e293b 0)`;
+    if (porcentagem === 0) {
+      document.getElementById("markup").style.left = `0%`;
+    } else {
+      document.getElementById("markup").style.left =
+        `calc(${porcentagem}% - 8px)`;
+    }
+  }
+  adicionarXP();
+  encherBarra();
 }
