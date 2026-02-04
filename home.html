@@ -7,12 +7,37 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap" rel="stylesheet"/>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body data-page="home">
+    <div id="modal" class="modal">
+      <div class="modal-conteudo">
+        <span onclick="fecharModal()">&times;</span>
+        <p id="msgModal"></p>
+      </div>
+    </div>
+
+    <div id="confirm" class="modal">
+      <div class="modal">
+        <p id="confirm-msg">fndsnfsnfknflf</p>
+        <div class="confirm-botoes">
+          <button onclick="confirmar()" style="color: #0d9488;">Confirmar</button>
+          <button onclick="cancelar()" style="color: #DC2626;">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
     <div id="profile"></div>
-    <p class="motivation">Conclua tarefas, ganhe XP e mantenha sua sequência.</p>
+    <p class="motivation">
+      Conclua tarefas, ganhe XP e mantenha sua sequência.
+    </p>
     <div id="taskSelect"></div>
     <a class="btn" href="./lista.html">+ Nova Tarefa</a>
     <script src="script.js"></script>

@@ -1,3 +1,14 @@
+// Sons
+const somTaskConcluida = new Audio("sons/somLevelUp.mp3");
+const somLevel = new Audio("sons/somTaskConcluida.mp3");
+
+function tocarSom(som) {
+  som.volume = 0.4;
+  som.currentTime = 0;
+  som.play();
+}
+
+// Usuário
 let user = {
   nome: "",
   email: "",
@@ -7,6 +18,43 @@ let user = {
   tarefasAtivas: [],
 };
 
+// Modal
+const modal = document.getElementById("modal");
+
+let msgModal = document.getElementById("msgModal");
+
+function abrirModal(msg) {
+  msgModal.textContent = msg;
+  modal.style.display = "block";
+}
+
+// Confirm
+// const confirmModal = document.getElementById("confirm");
+// const confirmMsg = document.getElementById("confirm-msg");
+
+// let confirmCallback = null;
+
+// function confirmCustom(msg, callback) {
+//   confirmMsg.textContent = msg;
+//   confirmModal.style.display = "block";
+//   confirmCallback = callback;
+// }
+
+// function confirmar() {
+//   confirmModal.style.display = "none";
+//   confirmCallback(true);
+// }
+
+// function cancelar() {
+//   confirmModal.style.display = "none";
+//   confirmCallback(false);
+// }
+
+function fecharModal() {
+  modal.style.display = "none";
+}
+
+// Salvar / carregar usuário no LocalStorage
 function salvarUsuario() {
   localStorage.setItem("taskgame_user", JSON.stringify(user));
 }
@@ -32,6 +80,10 @@ function carregarUsuario() {
 document.addEventListener("DOMContentLoaded", () => {
   const page = document.body.dataset.page;
 
+  if (page === "load") {
+    initLoad();
+  }
+
   if (page === "login") {
     initLogin();
   }
@@ -45,6 +97,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+function initLoad() {
+  carregarUsuario(user);
+
+  if (user.tarefasAtivas.length === 0 && user.nome === "") {
+    setTimeout(() => {
+      window.location.href = "boasvindas.html";
+    }, 3500);
+  } else {
+    setTimeout(() => {
+      window.location.href = "home.html";
+    }, 3500);
+  }
+}
+
 function initLogin() {
   // Captura o botão e adiciona evento de clique
   document.getElementById("botaoLogin").addEventListener("click", function () {
@@ -55,34 +121,34 @@ function initLogin() {
 
     // Validações
     if (!nomeValor) {
-      alert("Por favor, preencha o nome.");
+      abrirModal("Por favor, preencha o nome.");
       return;
     }
 
     if (nomeValor.length < 4) {
-      alert("O nome deve ter no mínimo 4 caracteres.");
+      abrirModal("O nome deve ter no mínimo 4 caracteres.");
       return;
     }
 
     if (!emailValor) {
-      alert("Por favor, preencha o email.");
+      abrirModal("Por favor, preencha o email.");
       return;
     }
 
     // Validação de email
     const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!regexEmail.test(emailValor)) {
-      alert("Por favor, insira um email válido.");
+      abrirModal("Por favor, insira um email válido.");
       return;
     }
 
     if (!senhaValor) {
-      alert("Por favor, preencha a senha.");
+      abrirModal("Por favor, preencha a senha.");
       return;
     }
 
     if (senhaValor.length < 6) {
-      alert("A senha deve ter no mínimo 6 caracteres.");
+      abrirModal("A senha deve ter no mínimo 6 caracteres.");
       return;
     }
 
@@ -391,7 +457,7 @@ function initLista() {
 
       // Validação: precisa selecionar pelo menos 5 tarefas
       if (idsSelecionados.length < 5) {
-        alert("Selecione pelo menos 5 tarefas.");
+        abrirModal("Selecione pelo menos 5 tarefas.");
         return false; // indica falha
       }
 
@@ -425,11 +491,11 @@ function initHome() {
 
   console.log(localStorage.taskgame_user);
 
+  // <i class="fa-solid fa-user"></i>
   const profile = document.getElementById("profile");
   profile.innerHTML = `<div class="perfil">
-      <h1 id="userName">${user.nome}</h1>
-      <h2 id="nivel">Nível ${user.nivel}</h2>
-      <i class="fa-solid fa-user"></i>
+  <h1 id="userName">${user.nome}</h1>
+  <h2 id="nivel">Nível ${user.nivel}</h2>
     </div>
     <div class="level">
       <div class="text">
@@ -497,6 +563,8 @@ function initHome() {
           return;
         }
 
+        tocarSom(somTaskConcluida);
+
         // Marca como concluída e impede desmarcar
         target.checked = true;
         target.disabled = true;
@@ -531,17 +599,19 @@ function initHome() {
 
   inicializarEventosTarefas();
 
-  // -----------------
   // Sistema de Níveis
-  // -----------------
   function calcularXPRequisito(nivel) {
     // Nível 1: 180 XP, Nível 2: 240 XP, Nível 3: 300 XP, etc.
     return 180 + (nivel - 1) * 60;
   }
 
   function adicionarXP(quantidade) {
-    if (typeof quantidade !== 'number' || isNaN(quantidade) || quantidade <= 0) {
-      console.warn('adicionarXP: quantidade inválida', quantidade);
+    if (
+      typeof quantidade !== "number" ||
+      isNaN(quantidade) ||
+      quantidade <= 0
+    ) {
+      console.warn("adicionarXP: quantidade inválida", quantidade);
       return false;
     }
 
@@ -551,7 +621,9 @@ function initHome() {
     while (user.xp >= calcularXPRequisito(user.nivel)) {
       user.xp -= calcularXPRequisito(user.nivel);
       user.nivel++;
-      console.log(`🎉 Parabéns! Você subiu para o nível ${user.nivel}!`);
+      abrirModal(`Você subiu para o nível ${user.nivel}!`);
+     
+      tocarSom(somLevelUp);
     }
 
     salvarUsuario();
@@ -574,7 +646,7 @@ function initHome() {
       document.getElementById("markup").style.left = `0%`;
     } else {
       document.getElementById("markup").style.left =
-        `calc(${porcentagem}% - 8px)`;
+        `calc(${porcentagem}% - 0.5rem)`;
     }
   }
   adicionarXP();
