@@ -3,7 +3,6 @@
 <p align="center">
   <a href="#-tecnologias">Tecnologias</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#-projeto">Projeto</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-layout">Layout</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#memo-licença">Licença</a>
 </p>
 
@@ -14,7 +13,7 @@
 <br>
 
 <p align="center">
-  <img alt="projeto Meu Portfólio" src="./projetos/TaskGame (capa).png" width="100%">
+  <img alt="Projeto TaskGame" src="./Projetos para README/TaskGame (capa).png" width="100%">
 </p>
 
 ## 🚀 Tecnologias
